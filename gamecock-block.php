@@ -103,18 +103,19 @@ function render_gamecock_block() {
 
 	$feed_from_blog = simplexml_load_file( 'https://www.garnetandblackattack.com/rss/current.xml' );
 
-	if ( ! $feed_from_blog || ! property_exists( $feed_from_blog, 'channel' ) || ! is_array( $feed_from_blog->channel, 'item' ) ) {
+	if ( ! $feed_from_blog ) {
 		return '<!-- ' . __( 'Could not load RSS feed.', 'gamecock-block' ) . ' -->';
 	}
 
-	$story     = $feed_from_blog->channel->item[0];
+	$story     = $feed_from_blog->entry[0];
 	$read_more = __( 'Read more...', 'gamecock-block' );
+	$link_href = $story->link->attributes()['href'];
 
 	return <<<EOF
 <div class="wp-block-oddevan-gamecock-block">
-	<h2><a href="$story->link">$story->title</a></h2>
-	<p>$story->description</p>
-	<p><a href="$story->link">$read_more</a>
+	<h2><a href="$link_href">$story->title</a></h2>
+	$story->content
+	<p><a href="$link_href">$read_more</a>
 </div>
 EOF;
 }
