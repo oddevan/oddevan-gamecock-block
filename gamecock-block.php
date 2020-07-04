@@ -69,9 +69,10 @@ function register_block() {
 
 	// Register block with WordPress.
 	register_block_type( 'oddevan/gamecock-block', array(
-		'editor_script' => 'gamecock-block-editor-script',
-		'editor_style'  => 'gamecock-block-editor-style',
-		'style'         => 'gamecock-block-style',
+		'editor_script'   => 'gamecock-block-editor-script',
+		'editor_style'    => 'gamecock-block-editor-style',
+		'style'           => 'gamecock-block-style',
+		'render_callback' => __NAMESPACE__ . '\render_gamecock_block',
 	) );
 
 	// Register frontend script.
@@ -86,3 +87,34 @@ function register_block() {
 	}
 }
 add_action( 'init', __NAMESPACE__ . '\register_block' );
+
+/**
+ * Render the Gamecock Block
+ *
+ * @author Evan Hildreth <me@eph.me>
+ * @since 1.0.0
+ *
+ * @return string rendered block HTML
+ */
+function render_gamecock_block() {
+	if ( ! function_exists( 'simplexml_load_file' ) ) {
+		return '<!-- ' . __( 'The Gamecock Block requires SimpleXML which is not enabled on your server.', 'gamecock-block' ) . ' -->';
+	}
+
+	$feed_from_blog = simplexml_load_file( 'https://www.garnetandblackattack.com/rss/current.xml' );
+
+	if ( ! $feed_from_blog || ! property_exists( $feed_from_blog, 'channel' ) || ! is_array( $feed_from_blog->channel, 'item' ) ) {
+		return '<!-- ' . __( 'Could not load RSS feed.', 'gamecock-block' ) . ' -->';
+	}
+
+	$story     = $feed_from_blog->channel->item[0];
+	$read_more = __( 'Read more...', 'gamecock-block' );
+
+	return <<<EOF
+<div class="wp-block-oddevan-gamecock-block">
+	<h2><a href="$story->link">$story->title</a></h2>
+	<p>$story->description</p>
+	<p><a href="$story->link">$read_more</a>
+</div>
+EOF;
+}

@@ -1,9 +1,6 @@
 /**
  * REGISTER: oddEvan Gamecock Block.
  */
-import edit from './edit';
-import save from './save';
-
 import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 
@@ -22,6 +19,10 @@ registerBlockType( 'oddevan/gamecock-block', {
 			selector: 'p',
 		},
 	},
-	edit,
-	save,
+	edit() {
+		return (<p>{__( 'Gamecock Block will render here', 'gamecock-block' )}</p>);
+	},
+	save() {
+		return null;
+	},
 } );
