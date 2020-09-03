@@ -114,7 +114,6 @@ function render_gamecock_block() {
 	return <<<EOF
 <div class="wp-block-oddevan-gamecock-block">
 	<h2><a href="$link_href">$story->title</a></h2>
-	$story->content
 	<p><a href="$link_href">$read_more</a>
 </div>
 EOF;
